@@ -24,7 +24,6 @@ class GameBoard {
                 this.board[i][j] = new cellObject.constructor('', false, cellValue.UNEXPOSED);
             }
         }
-        return this.board;
     }
 
     setBombs = (bombsAmount) => {
@@ -37,7 +36,6 @@ class GameBoard {
                 bombsAmount--;
             }
         }
-        return this.board;
     }
 
     setCellsValues = () => { //set all the values of the cells by number of bombs around each one
