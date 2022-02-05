@@ -3,9 +3,8 @@ const cellOutput = require('../cell/cellsOutputs');
 
 class GameBoard {
 
-    constructor(width, length, bombsAmount) {
-        this.width = width;
-        this.length = length;
+    constructor(size, bombsAmount) {
+        this.size = size;
         this.buildBoard();
         this.setBombs(bombsAmount);
         this.setCellValues()
@@ -14,14 +13,14 @@ class GameBoard {
     buildBoard = () => {
 
         //create the 2D array
-        this.board = [this.width];
-        for (let i = 0; i < this.width; i++) {
-            this.board[i] = new Array(this.length);
+        this.board = [this.size];
+        for (let i = 0; i < this.size; i++) {
+            this.board[i] = new Array(this.size);
         }
 
         // create every cell in the 2D array as a cellObject with initial values
-        for (let i = 0; i < this.width; i++) {
-            for (let j = 0; j < this.length; j++) {
+        for (let i = 0; i < this.size; i++) {
+            for (let j = 0; j < this.size; j++) {
                 this.board[i][j] = new cellObject.constructor('', false, cellOutput.UNEXPOSED);
             }
         }
@@ -30,8 +29,8 @@ class GameBoard {
 
     setBombs = (bombsAmount) => {
         while (bombsAmount > 0) {
-            let randX = Math.floor(Math.random() * this.width);
-            let randY = Math.floor(Math.random() * this.length);
+            let randX = Math.floor(Math.random() * this.size);
+            let randY = Math.floor(Math.random() * this.size);
             if (!(this.board[randX][randY] === cellOutput.BOMB)) {
                 this.board[randX][randY].value = cellOutput.BOMB;
                 bombsAmount--;
@@ -41,8 +40,8 @@ class GameBoard {
     }
 
     setCellValues = () => {
-        for (let i = 0; i < this.width; i++) {
-            for (let j = 0; j < this.length; j++) {
+        for (let i = 0; i < this.size; i++) {
+            for (let j = 0; j < this.size; j++) {
                 if (!(this.board[i][j].value === cellOutput.BOMB)) {
                     this.setCellValue(i, j);
                 }
@@ -70,8 +69,8 @@ class GameBoard {
 
     printBoard = () => {
         let res = '';
-        for (let i = 0; i < this.width; i++) {
-            for (let j = 0; j < this.length; j++) {
+        for (let i = 0; i < this.size; i++) {
+            for (let j = 0; j < this.size; j++) {
                 res += this.board[i][j].output + ' ';
             }
             res += '\n';
