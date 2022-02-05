@@ -1,7 +1,9 @@
 const GameBoard = require("../game/gameBoard");
 const {executeAction, startGame} = require("../game/gameManagement");
 const prompt = require('prompt-sync')();
+const outputs = require('../game/contactPlayer');
+const {setParams} = require("../game/setParams");
 
-const boardParams = prompt('Enter board size and number of bombes in the format (board size,number of bombs): ');
-const board = new GameBoard.constructor(parseInt(boardParams.split(",")[0]), parseInt(boardParams.split(",")[1]));
-startGame(board);3
+const input = prompt(outputs.SET_BOARD_PARAMS);
+const board = new GameBoard.constructor(setParams(input,0), setParams(input,1));
+startGame(board);

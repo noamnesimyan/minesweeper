@@ -1,5 +1,5 @@
 const cellObject = require('../cell/cellObject');
-const cellOutput = require('../cell/cellsOutputs');
+const cellValue = require('../cell/cellsValues');
 
 class GameBoard {
 
@@ -7,7 +7,7 @@ class GameBoard {
         this.size = size;
         this.buildBoard();
         this.setBombs(bombsAmount);
-        this.setCellValues()
+        this.setCellsValues()
     }
 
     buildBoard = () => {
@@ -21,7 +21,7 @@ class GameBoard {
         // create every cell in the 2D array as a cellObject with initial values
         for (let i = 0; i < this.size; i++) {
             for (let j = 0; j < this.size; j++) {
-                this.board[i][j] = new cellObject.constructor('', false, cellOutput.UNEXPOSED);
+                this.board[i][j] = new cellObject.constructor('', false, cellValue.UNEXPOSED);
             }
         }
         return this.board;
@@ -29,20 +29,21 @@ class GameBoard {
 
     setBombs = (bombsAmount) => {
         while (bombsAmount > 0) {
+            //set bombs in random placed on the board
             let randX = Math.floor(Math.random() * this.size);
             let randY = Math.floor(Math.random() * this.size);
-            if (!(this.board[randX][randY] === cellOutput.BOMB)) {
-                this.board[randX][randY].value = cellOutput.BOMB;
+            if (!(this.board[randX][randY] === cellValue.BOMB)) {
+                this.board[randX][randY].value = cellValue.BOMB;
                 bombsAmount--;
             }
         }
         return this.board;
     }
 
-    setCellValues = () => {
+    setCellsValues = () => { //set all the values of the cells by number of bombs around each one
         for (let i = 0; i < this.size; i++) {
             for (let j = 0; j < this.size; j++) {
-                if (!(this.board[i][j].value === cellOutput.BOMB)) {
+                if (!(this.board[i][j].value === cellValue.BOMB)) {
                     this.setCellValue(i, j);
                 }
             }
@@ -55,7 +56,7 @@ class GameBoard {
         for (let i = x - 1; i <= x + 1; i++) {
             for (let j = y - 1; j <= y + 1; j++) {
                 try {
-                    if (this.board[i][j].value === cellOutput.BOMB) {
+                    if (this.board[i][j].value === cellValue.BOMB) {
                         value++;
                     }
                 } catch (e) {

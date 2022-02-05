@@ -1,5 +1,7 @@
-const cellsOutput = require('../cell/cellsOutputs');
+const cellValue = require('../cell/cellsValues');
 const actionType = require('../cell/actionTypes');
+const outputs = require('../game/contactPlayer');
+const {setParams} = require("../game/setParams");
 
 const prompt = require('prompt-sync')();
 
@@ -7,34 +9,34 @@ startGame = (board) => {
     let gameEnded = false
     while (!gameEnded) {
         board.printBoard(board);
-        const input = prompt('Enter your action in (X,Y,1/-1) format: \n(X- length location, Y- width location, 1- expose, -1- flag) ');
-        gameEnded = executeAction(board, parseInt(input.split(",")[0]), parseInt(input.split(",")[1]), parseInt(input.split(",")[2]));
+        const input = prompt(outputs.CREATE_NEW_BOARD);
+        gameEnded = executeAction(board, setParams(input,0), setParams(input,1), setParams(input,2));
+
         if (isGameOver(board)) {
             gameEnded = true;
-            console.log("Congratulations! You won!")
+            console.log(outputs.WON_GAME);
         }
         if (gameEnded === false) {
-            console.log("The new board is: ")
+            console.log(outputs.CREATE_NEW_BOARD)
         }
 
     }
 }
-
 executeAction = (board, x, y, pressType) => {
     const cell = board.board[x][y];
 
-    if (cell.value === cellsOutput.BOMB) { // if the user pressed on bomb
+    if (cell.value === cellValue.BOMB) { // if the user press on bomb
         if (pressType === actionType.EXPOSE) {
-            console.log("Game Over! you pressed a bomb!");
+            console.log(outputs.GAME_OVER);
             return true;
         } else if (pressType === actionType.FLAG) {
-            cell.output = cellsOutput.FLAG;
+            cell.output = cellValue.FLAG;
         }
     }
-    else if (cell.isExposed) { // if the user pressed on exposed cell
-        console.log("You already exposed this cell, try again");
+    else if (cell.isExposed) { // if the user press on exposed cell
+        console.log(outputs.EXPOSED_CELL);
     }
-    else { // if the user pressed regular cell
+    else { // if the user press regular cell
         if (pressType === actionType.EXPOSE) {
             if (cell.value === 0) {
                 exposeCellsAround(board, x, y);
@@ -43,13 +45,13 @@ executeAction = (board, x, y, pressType) => {
                 cell.isExposed = true;
             }
         } else if (pressType === actionType.FLAG) {
-            cell.output = cellsOutput.FLAG;
+            cell.output = cellValue.FLAG;
         }
     }
     return false;
 }
 
-const exposeCellsAround = (board, x, y) => { //in case user pressed on empty cell
+const exposeCellsAround = (board, x, y) => { //in case user pressed on empty cell, expose all cells around it
     for (let i = x - 1; i <= x + 1; i++) {
         for (let j = y - 1; j <= y + 1; j++) {
             try {
@@ -68,11 +70,12 @@ const exposeCellsAround = (board, x, y) => { //in case user pressed on empty cel
 }
 
 const isGameOver = (board) => {
+    //check if number of bombs equal to number of unexposed cells
     let unExposedCells = 0;
     let bombsAmount = 0;
     for (let i = 0; i < board.size; i++) {
         for (let j = 0; j < board.size; j++) {
-            if (board.board[i][j].value === cellsOutput.BOMB) {
+            if (board.board[i][j].value === cellValue.BOMB) {
                 bombsAmount++
             }
             if (!(board.board[i][j].isExposed)) {
