@@ -1,5 +1,5 @@
 const cellObject = require('../cell/cellObject');
-const cellType = require('../cell/cellsOutputs');
+const cellOutput = require('../cell/cellsOutputs');
 
 class GameBoard {
 
@@ -22,7 +22,7 @@ class GameBoard {
         // create every cell in the 2D array as a cellObject with initial values
         for (let i = 0; i < this.width; i++) {
             for (let j = 0; j < this.length; j++) {
-                this.board[i][j] = new cellObject.constructor('', false, '?'); //todo: no more magic strings
+                this.board[i][j] = new cellObject.constructor('', false, cellOutput.UNEXPOSED);
             }
         }
         return this.board;
@@ -32,8 +32,8 @@ class GameBoard {
         while (bombsAmount > 0) {
             let randX = Math.floor(Math.random() * this.width);
             let randY = Math.floor(Math.random() * this.length);
-            if (!(this.board[randX][randY] === cellType.BOMB)) {
-                this.board[randX][randY].value = cellType.BOMB;
+            if (!(this.board[randX][randY] === cellOutput.BOMB)) {
+                this.board[randX][randY].value = cellOutput.BOMB;
                 bombsAmount--;
             }
         }
@@ -43,27 +43,24 @@ class GameBoard {
     setCellValues = () => {
         for (let i = 0; i < this.width; i++) {
             for (let j = 0; j < this.length; j++) {
-                if(!(this.board[i][j].value === cellType.BOMB)) {
-                    this.setCellValue(i,j);
+                if (!(this.board[i][j].value === cellOutput.BOMB)) {
+                    this.setCellValue(i, j);
                 }
             }
         }
     }
 
-    setCellValue = (x,y) => {
+    setCellValue = (x, y) => {
         let value = 0;
         //running on all cells around cell[x,y] and summing the amount of bombs
         for (let i = x - 1; i <= x + 1; i++) {
             for (let j = y - 1; j <= y + 1; j++) {
                 try {
-                    if (this.board[i][j].value === cellType.BOMB) {
+                    if (this.board[i][j].value === cellOutput.BOMB) {
                         value++;
                     }
                 } catch (e) {
-                  //  if(!(this.board[i][j] === undefined)) { //continue if the exception is index out of bound
-                  //      console.log("something went wrong");
-                  //      console.log(e.message);
-                  //  }
+                    //if I have array index out of bound exception (and I do) I skip it.
                 }
             }
         }

@@ -2,7 +2,7 @@ const cellObject = class {
 
     constructor(value, isExposed, output) {
         this.value = value;
-        this.isExposed = isExposed; // todo: check this
+        this.isExposed = isExposed;
         this.output = output;
     }
 };

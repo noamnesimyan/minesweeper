@@ -1,31 +1,26 @@
 const cellsOutput = require('../cell/cellsOutputs');
 const actionType = require('../cell/actionTypes');
 
+const prompt = require('prompt-sync')();
+
 startGame = (board) => {
     let gameEnded = false
     while (!gameEnded) {
-        gameEnded = executeAction(board, 0, 0, -1);
-        if (gameEnded === false)  {
+        board.printBoard(board);
+        const action = prompt('Enter your action in (X,Y,1/-1) format: \n(X- length location, Y- width location, 1- expose, -1- flag) ');
+        //gameEnded = executeAction(board, 0,0,1);
+        gameEnded = executeAction(board, parseInt(action.split(",")[0]), parseInt(action.split(",")[1]), parseInt(action.split(",")[2]));
+        if (gameEnded === false) {
             console.log("The new board is: ")
-            board.printBoard(board);
         }
-        gameEnded = isGameOver(board);
-    }
-}
-
-const isGameOver = (board) => {
-    for(let i = 0; i < board.board.width; i++) {
-        for (let j = 0; j < board.board.length; j++) {
-            if(!board.board.isExposed) {
-                return false;
-            }
+        if (isGameOver(board)) {
+            gameEnded = true;
+            console.log("Congratulations! You won!")
         }
     }
-    return true;
 }
 
 executeAction = (board, x, y, pressType) => {
-
     const cell = board.board[x][y];
     if (cell.value === cellsOutput.BOMB) {
         if (pressType === actionType.EXPOSE) {
@@ -37,7 +32,7 @@ executeAction = (board, x, y, pressType) => {
             cell.isExposed = true;
         }
     } else if (!(cell.output === cellsOutput.UNEXPOSED)) {
-        console.log("You can't press this cell, you already did!");
+        console.log("You already exposed this cell, try again");
     } else {
         if (pressType === actionType.EXPOSE) {
             if (cell.value === 0) {
@@ -48,13 +43,12 @@ executeAction = (board, x, y, pressType) => {
             }
         } else if (pressType === actionType.FLAG) {
             cell.output = cellsOutput.FLAG;
-            cell.isExposed = true;
         }
     }
     return false;
 }
 
-const exposeCellAround = (board, x, y) => {
+const exposeCellAround = (board, x, y) => { //in case user pressed on empty cell
     for (let i = x - 1; i <= x + 1; i++) {
         for (let j = y - 1; j <= y + 1; j++) {
             try {
@@ -67,9 +61,26 @@ const exposeCellAround = (board, x, y) => {
                     }
                 }
             } catch (e) {
+                //if I have array index out of bound exception (and I do) I skip it.
             }
         }
     }
+}
+
+const isGameOver = (board) => {
+    let unExposedCells = 0;
+    let bombsAmount = 0;
+    for (let i = 0; i < board.width; i++) {
+        for (let j = 0; j < board.length; j++) {
+            if(board.board[i][j].value === cellsOutput.BOMB) {
+                bombsAmount++
+            }
+            if (!(board.board[i][j].isExposed)) {
+                unExposedCells++;
+            }
+        }
+    }
+    return (unExposedCells === bombsAmount);
 }
 
 exports.executeAction = executeAction;
