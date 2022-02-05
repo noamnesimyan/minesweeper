@@ -1,5 +1,5 @@
-const {buildMap, setBombs, printMap} = require("./mapHandler");
+const {buildMap, setBombs, printMap} = require("./boardHandler");
 
-map = buildMap(10,10);
-map = setBombs(map, 10);
-printMap(map);
+board = buildMap(10,10);
+boardboard = setBombs( board, 10);
+printMap(board);
